@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRUD App</title>
+</head>
+<body>
+
+<h2>User Form</h2>
+
+<form id="userForm">
+  <input type="hidden" id="userId">
+  <input type="text" id="name" placeholder="Name" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="number" id="age" placeholder="Age" required>
+  <button type="submit">Save</button>
+</form>
+
+<h2>User List</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Age</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="userTable"></tbody>
+</table>
+
+<script>
+const form = document.getElementById("userForm");
+const userTable = document.getElementById("userTable");
+
+function fetchUsers() {
+  fetch("/users")
+    .then(res => res.json())
+    .then(data => {
+      userTable.innerHTML = "";
+      data.forEach(user => {
+        userTable.innerHTML += `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.age}</td>
+            <td>
+              <button onclick="editUser(${user.id}, '${user.name}', '${user.email}', ${user.age})">Edit</button>
+              <button onclick="deleteUser(${user.id})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+    });
+}
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const id = document.getElementById("userId").value;
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const age = document.getElementById("age").value;
+
+  if (id) {
+    fetch(`/users/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, age })
+    }).then(() => fetchUsers());
+  } else {
+    fetch("/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, age })
+    }).then(() => fetchUsers());
+  }
+
+  form.reset();
+});
+
+if(loginuser == 'admin'){
+function editUser(id, name, email, age) {
+  document.getElementById("userId").value = id;
+  document.getElementById("name").value = name;
+  document.getElementById("email").value = email;
+  document.getElementById("age").value = age;
+}
+}
+
+
+function deleteUser(id) {
+  fetch(`/users/${id}`, { method: "DELETE" })
+    .then(() => fetchUsers());
+}
+
+fetchUsers();
+</script>
+
+</body>
+</html>
