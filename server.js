@@ -4,12 +4,12 @@ const cors = require("cors");
 
 const app = express();
 
-// ✅ Middleware
+//  Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));   // Loads index.html automatically
 
-// ✅ Database Connection
+//  Database Connection
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -26,9 +26,8 @@ db.connect((err) => {
 });
 
 
-// =====================
-// 🔹 CRUD ROUTES
-// =====================
+//  CRUD ROUTES
+
 
 // CREATE
 app.post("/users", (req, res) => {
@@ -87,9 +86,8 @@ app.delete("/users/:id", (req, res) => {
 });
 
 
-// =====================
-// ✅ Start Server
-// =====================
+//  Start Server
+
 app.listen(4000, () => {
   console.log("Server running on http://localhost:4000");
 });
